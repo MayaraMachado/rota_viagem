@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-
 class BestPathSerializer(serializers.Serializer):
     route      = serializers.CharField()
     total_cost = serializers.IntegerField()

@@ -5,15 +5,30 @@ from api.infrastructure.fileTXT import FileTXT
 from .graph_entity import Graph
 
 class RouteDomain():
+	'''
+		This class is responsible for validating the possible routes in a graph.
+	'''
 
 	def __init__(self, filepath):
 		'''
+			Instantiates the RouteDomain object, and consequently calls the reading 
+			of the file and calls the instantiation of the graph that will be used.
 
-			raises:
+			Args:
 			----
-			TypeError
-			FileNotFoundError
+			- filepath (str) File path to be read and use to check the paths
+
+
+			Raises:
+			----
+			- KeyError
+				- Currently the API only supports .txt and .csv files, so if another 
+				  type is passed, RouteDomain will throw an exception.
+
+			- FileNotFoundError
+				- If the file to be read is not found.
 		'''
+
 		file_accepted = {
 			"csv" : FileCSV,
 			"txt" : FileTXT
@@ -27,13 +42,24 @@ class RouteDomain():
 	
 	def insert(self, origin, end, cost):
 		'''
+			Insert new connections in the file and reflect these insertions in the graph.
+
+			Args:
+			----
+			- lines (list of list)
+
+			Returns:
+			----
+
+			- boolean indicating that creation was successful
 		'''
 		if not isinstance(cost, int):
 			raise ValueError('Cost value invalid.')
 
-		line = [[origin, end, str(cost)]]
-		self.file_entity.write_file(line)
-		success = self.graph.add_node(line[0])
+		lines = [[origin, end, str(cost)]]
+		self.file_entity.write_file(lines)
+		for line in lines:
+			success = self.graph.add_node(line)
 
 		return success
 
@@ -43,15 +69,15 @@ class RouteDomain():
 
 			Args:
 			---
-
-			graph (Object): Graph Object where the function is going to search.
 			start (str): The initial node where the function will go through.
 			end (str): The final node where the function will consider the path complete.
 
 			Returns:
 			---
 
-			Tuple containing a list of the shortest path and an integer for the calculated weight of the shortest path.
+			dict containing the graph with the calculated best path to achieve each node.
+			ex.:
+			{"node1":0, "node2":("node_1", 2)}
 		'''
 				
 		graph = self.graph.get_graph()
@@ -80,7 +106,7 @@ class RouteDomain():
 			# If this was the last 
 			if not open_nodes: 
 				break    
-			# Select as the new current, the closest one of the open nodes
+			# Select as the new current, the less costly one of the open nodes
 			current_node = min(open_nodes.items(), key=lambda x: x[1])
 			del open_nodes[current_node[0]]
 			
@@ -89,6 +115,27 @@ class RouteDomain():
 
 	def __get_best_path(self, calculated_connections, node, node_neighbor):
 		'''
+			Performs the search recursively to find the best way to reach the destination.
+
+			Args:
+			-----
+
+			- calculated_connections (dict) contains the calculated value of the path to each 
+			  node of the graph.
+			- node (str) of the origin node.
+			- node_neighbor (str) represents the next connected node to be searched.
+
+			Returs:
+			-----
+
+			- string containing the list of the best path
+
+			Raises:
+			-----
+
+			- ValueError
+				- If the two nodes passed weren't connected.
+
 		'''
 		
 		if node == node_neighbor:
@@ -99,6 +146,26 @@ class RouteDomain():
 			raise ValueError("The nodes are not connected.")
 
 	def best_path(self, to, end):
+		'''
+			Check which path is least expensive from a source to a destination, and prepare 
+			the message to be returned to the user
+
+			Args:
+			----
+			- to (str) node to be the origin
+			- end (str) node to be the destination
+
+			Returns:
+			-----
+			- path (str) containing the best path
+			- total_cost (int) containing the total cost from source to destination
+
+			Raises:
+			-----
+			- AttributeError
+				- If the node received as a parameter does not exist in the graph.
+
+		'''
 
 		node_exists = self.graph.verify_node_exists(to) and self.graph.verify_node_exists(end)
 

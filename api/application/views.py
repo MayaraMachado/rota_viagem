@@ -8,12 +8,26 @@ from .serializers import RouteInsertSerializer, BestPathSerializer
 
 class RouteView(APIView):
     """
+        This is the Route view. It is responsible for handling de 
+        API requests, and to redirect to the domain class responsible.
     """
     def __init__(self):
+        '''
+            For development purposes, this View always instantiates RotaDomain 
+            with the .csv file indicated in the challenge statement.
+
+            If it is desired to use a .txt file instead, it will be necessary 
+            to change the file name in the project settings (bexs_desafio / settings.py)
+        '''
         self.domain = RouteDomain(settings.FILE_EXAMPLE)
 
     def get(self, request):
         '''
+            The Get method queries the best route to reach a destination from a point, the 
+            application uses the values ​​informed in the consumption .txt or .csv file and 
+            returns the result found.
+            This method will always receive two queryparams: to and from. These params will 
+            define the origin and destination for the best path query.        
         '''     
         try:
             from_route = self.request.query_params.get('from').upper()
@@ -29,11 +43,16 @@ class RouteView(APIView):
 
     def post(self, request):
         '''
-            {
-                "origin" : "GRU",
-                "end"    : "DSL",
-                "cost"   : 49
-            }
+            The post method allows one more connection to be added to the .txt or .csv file used. 
+            It is an analogy with the persistence functionality in a database.
+            
+            Requests must be in the following format:
+
+                {
+                    "origin" : "GRU",
+                    "end"    : "DSL",
+                    "cost"   : 49
+                }
         '''
     
         serializer = RouteInsertSerializer(data=request.data)
