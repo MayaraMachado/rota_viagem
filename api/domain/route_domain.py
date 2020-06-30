@@ -99,11 +99,9 @@ class RouteDomain():
 		if node == node_neighbor:
 			return node
 		elif node_neighbor in calculated_connections and isinstance(calculated_connections[node_neighbor], tuple):
-			return f"{self.__get_best_path(calculated_connections, node, calculated_connections[node_neighbor][0])} > {node_neighbor}"
+			return f"{self.__get_best_path(calculated_connections, node, calculated_connections[node_neighbor][0])} - {node_neighbor}"
 		else:
 			raise ValueError("The nodes are not connected.")
-
-
 
 	def best_path(self, to, end):
 		node_exists = self.graph.verify_node_exists(to) and self.graph.verify_node_exists(end)

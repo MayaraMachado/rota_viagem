@@ -12,14 +12,14 @@ def exec_shell(filepath):
 	except FileNotFoundError as e:
 		return "File not found."
 
+	print("Please use - to separate the locations. Ex.: ONE - ANOTHER")
 	from_node, to_node = list(map(str, input("please enter the route:").split('-')))
-	best_path, cost = route_domain.calculate_best_path(from_node, to_node)
+	from_node = from_node.replace(" ", "").upper()
+	to_node = to_node.replace(" ", "").upper()
+	best_path, cost = route_domain.best_path(from_node, to_node)
 	
-	best_path_fmt = " - ".join(best_path)
-	response = f"{best_path_fmt} > ${cost}"
-
+	response = f"{best_path} > ${cost}"
 	return response
-
 
 
 if __name__ == '__main__':

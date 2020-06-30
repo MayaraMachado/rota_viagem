@@ -15,10 +15,11 @@ class RouteView(APIView):
     def get(self, request):
         '''
         '''
-        from_route = self.request.query_params.get('from')
-        to_route = self.request.query_params.get('to')
+
         
         try:
+            from_route = self.request.query_params.get('from').upper()
+            to_route = self.request.query_params.get('to').upper()
             route, total_cost = self.domain.best_path(from_route, to_route)
             response = BestPathSerializer({'route':route, 'total_cost':total_cost})
             return Response(response.data, status=status.HTTP_200_OK)
@@ -26,6 +27,8 @@ class RouteView(APIView):
             return Response({"message":"Invalid params. Please use a valid location."}, status=status.HTTP_400_BAD_REQUEST)
         except ValueError as e:
             return Response({"message" : 'The nodes are not connected.'},status=status.HTTP_400_BAD_REQUEST)
+        except AttributeError as e:
+            return Response({"message" : "Please, send two locations to verify: origin and destination."})
 
     def post(self, request):
         '''
