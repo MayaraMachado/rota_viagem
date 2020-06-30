@@ -14,21 +14,18 @@ class RouteView(APIView):
 
     def get(self, request):
         '''
-        '''
-
-        
+        '''     
         try:
             from_route = self.request.query_params.get('from').upper()
             to_route = self.request.query_params.get('to').upper()
             route, total_cost = self.domain.best_path(from_route, to_route)
             response = BestPathSerializer({'route':route, 'total_cost':total_cost})
             return Response(response.data, status=status.HTTP_200_OK)
-        except ObjectDoesNotExist as e:
-            return Response({"message":"Invalid params. Please use a valid location."}, status=status.HTTP_400_BAD_REQUEST)
         except ValueError as e:
             return Response({"message" : 'The nodes are not connected.'},status=status.HTTP_400_BAD_REQUEST)
         except AttributeError as e:
-            return Response({"message" : "Please, send two locations to verify: origin and destination."})
+            print(e)
+            return Response({"message" : "Please, send two valid locations to verify: origin and destination."},status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
         '''
@@ -38,9 +35,13 @@ class RouteView(APIView):
                 "cost"   : 49
             }
         '''
+    
         serializer = RouteInsertSerializer(data=request.data)
         if serializer.is_valid():
-            sucess = self.domain.insert(**serializer.validated_data)
-            if sucess:
+            try:
+                sucess = self.domain.insert(**serializer.validated_data)
                 return Response(status=status.HTTP_201_CREATED)
-        return Response({"message":"Oops! Something bad happened, please try again later!"}, status=status.HTTP_400_BAD_REQUEST)
+            except ValueError as e:
+                return Response({"message" : "Invalid route attributes."}, status=status.HTTP_400_BAD_REQUEST)
+        else: 
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

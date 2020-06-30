@@ -108,4 +108,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-FILE_EXAMPLE = 'input-file-example.csv'
+FILE_EXAMPLE = 'files/input-file-example.csv'

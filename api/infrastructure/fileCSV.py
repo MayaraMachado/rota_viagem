@@ -3,8 +3,8 @@ import csv
 class FileCSV:
 	def __init__(self, file):
 		self.filepath = file
-		self.lines = []
-		self.__read_file()
+		self.__lines = []
+		self.valid = self.__read_file()
 
 	def __format_line(self, line, format_list=False):
 		if format_list:
@@ -22,6 +22,8 @@ class FileCSV:
 		with open(self.filepath, mode='r') as csv_file:
 			reader = csv.reader(csv_file)
 			self.lines = list(reader)
+
+		return True
 
 	def get_lines(self):
 		return self.lines

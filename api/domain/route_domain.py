@@ -1,7 +1,5 @@
 import logging
 import random
-from django.core.exceptions import ObjectDoesNotExist
-
 from api.infrastructure.fileCSV import FileCSV
 from api.infrastructure.fileTXT import FileTXT
 from .graph_entity import Graph
@@ -21,23 +19,20 @@ class RouteDomain():
 			"txt" : FileTXT
 		}
 
-		ext = filepath.split('.')[-1]
-		self.file_entity = file_accepted[ext](filepath)
+		self.file = filepath
+		ext = self.file.split('.')[-1]
+		self.file_entity = file_accepted[ext](self.file)
 		data = self.file_entity.get_lines()
 		self.graph = Graph(data)
 	
 	def insert(self, origin, end, cost):
 		'''
 		'''
+		if not isinstance(cost, int):
+			raise ValueError('Cost value invalid.')
+
 		line = [[origin, end, str(cost)]]
-		success = False
-
-		try:
-			self.file_entity.write_file(line)
-		except Exception as e:
-			logging.warning(e)
-			return success
-
+		self.file_entity.write_file(line)
 		success = self.graph.add_node(line[0])
 
 		return success
@@ -104,10 +99,11 @@ class RouteDomain():
 			raise ValueError("The nodes are not connected.")
 
 	def best_path(self, to, end):
+
 		node_exists = self.graph.verify_node_exists(to) and self.graph.verify_node_exists(end)
 
 		if not node_exists:
-			raise ObjectDoesNotExist("Node doesn't exists.")
+			raise AttributeError("Node doesn't exists.")
 
 		calculated_connections = self.__calculate_path(to, end)
 		path = self.__get_best_path(calculated_connections, to, end)

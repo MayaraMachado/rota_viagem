@@ -42,9 +42,8 @@ def test_create_graph():
 def test_add_new_node_to_graph():
     data = [('GRU', 'CDG', 75)]
     graph = Graph(data)
-    node = "NEW"
-    edges = {"NODE":1}
-    graph.add_node(node, edges)
+    new_node = ["NEW", "NODE",1]
+    graph.add_node(new_node)
     expected_graph={'GRU': {'CDG': 75},
                     'CDG': {},
                     'NEW': {'NODE': 1},
@@ -57,9 +56,8 @@ def test_add_new_node_to_graph():
 def test_add_new_edge_to_node():
     data = [('GRU', 'CDG', 75), ('NEW', 'NODE', 1)]
     graph = Graph(data)
-    node = "NEW"
-    edges = {"EDGE":2}
-    graph.add_node(node, edges)
+    new_edge_to_node = ["NEW","EDGE",2]
+    graph.add_node(new_edge_to_node)
     expected_graph={'GRU': {'CDG': 75},
                     'CDG': {},
                     'NEW': {'NODE': 1,'EDGE' : 2},

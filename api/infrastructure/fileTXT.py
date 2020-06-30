@@ -3,7 +3,7 @@ class FileTXT:
 	def __init__(self, file):
 		self.lines = []
 		self.filepath = file
-		self.__read_file()
+		self.valid = self.__read_file()
 
 	def __format_line(self, line, format_list=True):
 		if format_list:
@@ -24,6 +24,8 @@ class FileTXT:
 		archive.close()
 
 		self.lines = lines
+
+		return True
 
 	def get_lines(self):
 		return self.lines
