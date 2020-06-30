@@ -30,6 +30,6 @@ class FileCSV:
 		with open(self.filepath, 'a', newline='\n') as csv_file:
 			for row in lines:
 				row = self.__format_line(row)
-				csv_file.write(row)
 				csv_file.write('\n')
+				csv_file.write(row)
 		return True

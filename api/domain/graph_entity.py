@@ -2,13 +2,15 @@ class Graph:
 
 	def __init__(self, data):
 		self.__graph = {}
-		self.__format_to_graph(data)
+		created = self.__create_graph(data)
 
-	def __format_to_graph(self, values):
+	def __create_graph(self, values):
 		'''
+			This function is responsible for the graph creation,
+
 		'''
 		if not values:
-			raise ValueError('Grpah without values.')
+			raise ValueError('Graph values is missing.')
 
 		for value in values:
 			if not isinstance(value, tuple) and len(value) != 3:
@@ -28,17 +30,29 @@ class Graph:
 			if edge and edge not in self.__graph:
 				self.__graph[edge] = {}
 
-	def add_node(self, node, edges={}):
+		return True
+
+	def add_node(self, line):
+
+		node, edge, cost = line
+		connection = {edge:cost}
+
 		if node in self.__graph:
-			self.__graph[node].update(edges)
+			self.__graph[node].update(connection)
 		else:
-			self.__graph[node] = edges
+			self.__graph[node] = connection
 		
 		# Add the connection to the graph, if its node
 		# doesn't exists.
-		for edge in edges.keys():
-			if edge not in self.__graph:
-				self.__graph[edge] = {}
+		if edge not in self.__graph:
+			self.__graph[edge] = {}
+
+		return True
 
 	def get_graph(self):
 		return self.__graph
+
+	def verify_node_exists(self, node):
+		'''
+		'''
+		return node in self.__graph

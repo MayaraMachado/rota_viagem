@@ -1,14 +1,14 @@
 import logging
 import random
+from django.core.exceptions import ObjectDoesNotExist
+
 from api.infrastructure.fileCSV import FileCSV
 from api.infrastructure.fileTXT import FileTXT
 from .graph_entity import Graph
 
-FILE_EXAMPLE = 'input-file-example.txt'
-
 class RouteDomain():
 
-	def __init__(self, filepath=None):
+	def __init__(self, filepath):
 		'''
 
 			raises:
@@ -21,9 +21,8 @@ class RouteDomain():
 			"txt" : FileTXT
 		}
 
-		file = filepath if filepath else FILE_EXAMPLE
-		ext = file.split('.')[-1]
-		self.file_entity = file_accepted[ext](file)
+		ext = filepath.split('.')[-1]
+		self.file_entity = file_accepted[ext](filepath)
 		data = self.file_entity.get_lines()
 		self.graph = Graph(data)
 	
@@ -31,16 +30,19 @@ class RouteDomain():
 		'''
 		'''
 		line = [[origin, end, str(cost)]]
+		success = False
 
 		try:
-			sucesso = self.file_entity.write_file(line)
+			self.file_entity.write_file(line)
 		except Exception as e:
 			logging.warning(e)
-			sucesso = False
+			return success
 
-		return sucesso
+		success = self.graph.add_node(line[0])
 
-	def __calculate_best_path(self, start, end):
+		return success
+
+	def __calculate_path(self, start, end):
 		'''
 			Dijkstra's algorithm implementation to search the best path in a graph with weight.
 
@@ -90,7 +92,26 @@ class RouteDomain():
 
 		return discovered_path
 
+	def __get_best_path(self, calculated_connections, node, node_neighbor):
+		'''
+		'''
+		
+		if node == node_neighbor:
+			return node
+		elif node_neighbor in calculated_connections and isinstance(calculated_connections[node_neighbor], tuple):
+			return f"{self.__get_best_path(calculated_connections, node, calculated_connections[node_neighbor][0])} > {node_neighbor}"
+		else:
+			raise ValueError("The nodes are not connected.")
+
+
+
 	def best_path(self, to, end):
-		path = self.__calculate_best_path(to, end)
-		total_cost = path.get(end)[1]
-		return 'Not implemented', total_cost
+		node_exists = self.graph.verify_node_exists(to) and self.graph.verify_node_exists(end)
+
+		if not node_exists:
+			raise ObjectDoesNotExist("Node doesn't exists.")
+
+		calculated_connections = self.__calculate_path(to, end)
+		path = self.__get_best_path(calculated_connections, to, end)
+		total_cost = calculated_connections.get(end)[1]
+		return path, total_cost

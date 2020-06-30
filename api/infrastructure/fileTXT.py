@@ -9,7 +9,7 @@ class FileTXT:
 		if format_list:
 			return line.split(',')
 		else:
-			return ' '.join(line)
+			return ','.join(line)
 
 	def __read_file(self):
 		'''
