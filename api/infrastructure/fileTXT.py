@@ -23,6 +23,8 @@ class FileTXT:
 			lines.append(line)
 		archive.close()
 
+		self.lines = lines
+
 	def get_lines(self):
 		return self.lines
 

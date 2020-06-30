@@ -8,11 +8,11 @@ class Graph:
 		'''
 		'''
 		if not values:
-			raise ValueError
+			raise ValueError('Grpah without values.')
 
 		for value in values:
 			if not isinstance(value, tuple) and len(value) != 3:
-				raise ValueError
+				raise ValueError('Graph with invalid values.')
 
 			node, edge, weight = value
 

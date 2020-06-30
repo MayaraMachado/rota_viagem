@@ -16,8 +16,8 @@ class RouteView(APIView):
         from_route = self.request.query_params.get('from')
         to_route = self.request.query_params.get('to')
 
-        best_path = self.domain.calculate_best_path(from_route, to_route)
-        response = BestPathSerializer(best_path)
+        route, total_cost = self.domain.best_path(from_route, to_route)
+        response = BestPathSerializer({'route':route, 'total_cost':total_cost})
         return Response(response.data, status=status.HTTP_200_OK)
 
     def post(self, request):
