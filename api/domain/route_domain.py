@@ -40,7 +40,7 @@ class RouteDomain():
 		data = self.file_entity.get_lines()
 		self.graph = Graph(data)
 	
-	def insert(self, origin, end, cost):
+	def insert(self, routes):
 		'''
 			Insert new connections in the file and reflect these insertions in the graph.
 
@@ -53,13 +53,15 @@ class RouteDomain():
 
 			- boolean indicating that creation was successful
 		'''
-		if not isinstance(cost, int):
-			raise ValueError('Cost value invalid.')
+		lines = []
+		for route in routes:
+			node, edge, cost = list(route.values())
+			if not isinstance(cost, int):
+				raise ValueError('Cost value invalid.')
+			lines.append([node, edge, str(cost)])
+			success = self.graph.add_node([node, edge, str(cost)])
 
-		lines = [[origin, end, str(cost)]]
 		self.file_entity.write_file(lines)
-		for line in lines:
-			success = self.graph.add_node(line)
 
 		return success
 

@@ -23,18 +23,18 @@ def test_create_route_domain_with_inexistent_file():
 # inserir uma linha no arquivo
 def test_insert_invalid_new_route():
     filepath = "files/input-file-test.csv"
-    origin, end, cost = 'NewOrigin', 'NewDestination', "invalid"
+    routes = [{"origin" : 'NewOrigin', "end" : 'NewDestination',"cost" : "invalid"}]
     route_domain = RouteDomain(filepath)
     with pytest.raises(ValueError):
-        route_domain.insert(origin,end, cost)
+        route_domain.insert(routes)
 
 # inserir conexão com custo float, deve tornar inteiro
 def test_insert_invalid_new_route():
     filepath = "files/input-file-test.csv"
-    origin, end, cost = 'NewOrigin', 'NewDestination', 3.5
+    routes = [{"origin" : 'NewOrigin', "end" : 'NewDestination',"cost" : 3.5}]
     route_domain = RouteDomain(filepath)
     with pytest.raises(ValueError):
-        route_domain.insert(origin,end, cost)
+        route_domain.insert(routes)
 
 # teste calcular o melhor caminho
 def test_get_best_path():
@@ -56,19 +56,27 @@ def test_get_best_path_from_location_invalid():
 # inserir uma linha no arquivo
 def test_insert_new_route():
     filepath = "files/input-file-test.csv"
-    origin, end, cost = 'NewOrigin', 'NewDestination', 1009
+    routes = [{"origin" : 'NewOrigin', "end" : 'NewDestination',"cost" : 5}]
     route_domain = RouteDomain(filepath)
-    assert route_domain.insert(origin,end, cost) == True
+    assert route_domain.insert(routes) == True
+
+# inserir duas linha no arquivo
+def test_insert_new_route():
+    filepath = "files/input-file-test.csv"
+    routes = [{"origin" : 'NewOrigin', "end" : 'OtherDestination',"cost" : 15},
+              {"origin" : 'AnotherOrigin', "end" : 'OtherDestination',"cost" : 11},]
+    route_domain = RouteDomain(filepath)
+    assert route_domain.insert(routes) == True
 
 
 # teste calcular o melhor caminho de um caminho que não conversa
 def test_get_best_path_from_location_invalid():
     filepath = "files/input-file-test.csv"
-    new_origin, new_end, cost = 'SCL', 'ALM', 5
+    routes = [{"origin" : 'SCL', "end" : 'ALM',"cost" : 5}]
     to_node, from_node = 'ALM', 'CDG'
 
     route_domain = RouteDomain(filepath)
-    updated = route_domain.insert(new_origin, new_end, cost)
+    updated = route_domain.insert(routes)
 
     with pytest.raises(ValueError):
         best_path_response, total_cost_response = route_domain.best_path(to_node, from_node)

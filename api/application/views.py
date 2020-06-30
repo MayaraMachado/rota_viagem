@@ -58,7 +58,7 @@ class RouteView(APIView):
         serializer = RouteInsertSerializer(data=request.data)
         if serializer.is_valid():
             try:
-                sucess = self.domain.insert(**serializer.validated_data)
+                sucess = self.domain.insert(serializer.validated_data['routes'])
                 return Response(status=status.HTTP_201_CREATED)
             except ValueError as e:
                 return Response({"message" : "Invalid route attributes."}, status=status.HTTP_400_BAD_REQUEST)
