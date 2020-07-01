@@ -17,7 +17,7 @@ class RouteView(APIView):
             with the .csv file indicated in the challenge statement.
 
             If it is desired to use a .txt file instead, it will be necessary 
-            to change the file name in the project settings (bexs_desafio / settings.py)
+            to change the file name in the project settings (rota_viagem / settings.py)
         '''
         self.domain = RouteDomain(settings.FILE_EXAMPLE)
 
